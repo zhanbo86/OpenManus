@@ -229,6 +229,8 @@ class LLM:
             elif self.api_type == "aws":
                 self.client = BedrockClient()
             else:
+                print("base_url", self.base_url)
+                print("api_key", self.api_key)
                 self.client = AsyncOpenAI(api_key=self.api_key, base_url=self.base_url)
 
             self.token_counter = TokenCounter(self.tokenizer)
@@ -735,6 +737,7 @@ class LLM:
                     temperature if temperature is not None else self.temperature
                 )
 
+            print("params", params)
             response: ChatCompletion = await self.client.chat.completions.create(
                 **params, stream=False
             )
