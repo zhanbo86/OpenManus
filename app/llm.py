@@ -737,7 +737,7 @@ class LLM:
                     temperature if temperature is not None else self.temperature
                 )
 
-            print("params", params)
+            # print("params", params)
             response: ChatCompletion = await self.client.chat.completions.create(
                 **params, stream=False
             )
