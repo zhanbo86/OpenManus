@@ -688,6 +688,7 @@ class LLM:
 
             # Check if the model supports images
             supports_images = self.model in MULTIMODAL_MODELS
+            logger.info(f"steve: llm ask_tool supports_images: {supports_images}")
 
             # Format messages
             if system_msgs:
@@ -695,6 +696,8 @@ class LLM:
                 messages = system_msgs + self.format_messages(messages, supports_images)
             else:
                 messages = self.format_messages(messages, supports_images)
+
+            logger.info(f"steve: llm ask_tool format_messages: {messages}")
 
             # Calculate input token count
             input_tokens = self.count_message_tokens(messages)
@@ -714,6 +717,7 @@ class LLM:
                 raise TokenLimitExceeded(error_message)
 
             # Validate tools if provided
+            logger.info(f"steve: llm ask_tool tools: {tools}")
             if tools:
                 for tool in tools:
                     if not isinstance(tool, dict) or "type" not in tool:
@@ -738,9 +742,11 @@ class LLM:
                 )
 
             # print("params", params)
+            logger.info(f"steve: llm ask_tool params: {params}")
             response: ChatCompletion = await self.client.chat.completions.create(
                 **params, stream=False
             )
+            logger.info(f"steve: llm ask_tool response: {response}")
 
             # Check if response is valid
             if not response.choices or not response.choices[0].message:

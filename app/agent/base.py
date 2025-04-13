@@ -111,7 +111,9 @@ class BaseAgent(BaseModel, ABC):
 
         # Create message with appropriate parameters based on role
         kwargs = {"base64_image": base64_image, **(kwargs if role == "tool" else {})}
+        logger.info(f"before add_message: {self.memory.messages}")
         self.memory.add_message(message_map[role](content, **kwargs))
+        logger.info(f"after add_message: {self.memory.messages}")
 
     async def run(self, request: Optional[str] = None) -> str:
         """Execute the agent's main loop asynchronously.

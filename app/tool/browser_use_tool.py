@@ -14,6 +14,7 @@ from app.config import config
 from app.llm import LLM
 from app.tool.base import BaseTool, ToolResult
 from app.tool.web_search import WebSearch
+from app.logger import logger
 
 
 _BROWSER_DESCRIPTION = """
@@ -233,6 +234,7 @@ class BrowserUseTool(BaseTool, Generic[Context]):
         Returns:
             ToolResult with the action's output or error
         """
+        logger.info(f"steve: browser_use_tool execute action: {action}, url: {url}, index: {index}, text: {text}, scroll_amount: {scroll_amount}, tab_id: {tab_id}, query: {query}, goal: {goal}, keys: {keys}, seconds: {seconds}")
         async with self.lock:
             try:
                 context = await self._ensure_browser_initialized()
@@ -553,11 +555,14 @@ Page content:
         Get the current browser state as a ToolResult.
         If context is not provided, uses self.context.
         """
+        logger.info(f"steve: browser_use_tool get_current_state")
         try:
             # Use provided context or fall back to self.context
-            ctx = context or self.context
+            ctx = context or self.context  ## 上一次调用browser_use_tool的context
             if not ctx:
                 return ToolResult(error="Browser context not initialized")
+
+            logger.info(f"steve ctx: {ctx}")
 
             state = await ctx.get_state()
 

@@ -6,7 +6,7 @@ from pydantic import Field
 from app.agent.base import BaseAgent
 from app.llm import LLM
 from app.schema import AgentState, Memory
-
+from app.logger import logger
 
 class ReActAgent(BaseAgent, ABC):
     name: str
@@ -33,6 +33,7 @@ class ReActAgent(BaseAgent, ABC):
     async def step(self) -> str:
         """Execute a single step: think and act."""
         should_act = await self.think()
+        logger.info(f"steve: react step should_act: {should_act}")
         if not should_act:
             return "Thinking complete - no action needed"
         return await self.act()

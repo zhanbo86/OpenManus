@@ -48,12 +48,14 @@ class BrowserAgent(ToolCallAgent):
     async def get_browser_state(self) -> Optional[dict]:
         """Get the current browser state for context in next steps."""
         browser_tool = self.available_tools.get_tool(BrowserUseTool().name)
+        # logger.info(f"steve: browser_tool: {browser_tool}")
         if not browser_tool:
             return None
 
         try:
             # Get browser state directly from the tool
             result = await browser_tool.get_current_state()
+            logger.info(f"steve: browser get_browser_state result: {result}")
 
             if result.error:
                 logger.debug(f"Browser state error: {result.error}")
@@ -73,7 +75,9 @@ class BrowserAgent(ToolCallAgent):
     async def think(self) -> bool:
         """Process current state and decide next actions using tools, with browser state info added"""
         # Add browser state to the context
+        logger.info("steve: browser think")
         browser_state = await self.get_browser_state()
+        logger.info(f"steve: browser_state: {browser_state}")
 
         # Initialize placeholder values
         url_info = ""
@@ -119,6 +123,7 @@ class BrowserAgent(ToolCallAgent):
             content_below_placeholder=content_below_info,
             results_placeholder=results_info,
         )
+        logger.info(f"steve: browser next_step_prompt: {self.next_step_prompt}")
 
         # Call parent implementation
         result = await super().think()

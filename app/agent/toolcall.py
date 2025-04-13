@@ -37,10 +37,12 @@ class ToolCallAgent(ReActAgent):
 
     async def think(self) -> bool:
         """Process current state and decide next actions using tools"""
+        logger.info(f"steve: toolcall think, self.next_step_prompt: {self.next_step_prompt}")
         if self.next_step_prompt:
             user_msg = Message.user_message(self.next_step_prompt)
             self.messages += [user_msg]
 
+        logger.info(f"steve: toolcall think messages: {self.messages}")
         try:
             # Get response with tool options
             response = await self.llm.ask_tool(
@@ -103,11 +105,13 @@ class ToolCallAgent(ReActAgent):
                 return False
 
             # Create and add assistant message
+            logger.info(f"steve: toolcall think content: {content}")
             assistant_msg = (
                 Message.from_tool_calls(content=content, tool_calls=self.tool_calls)
                 if self.tool_calls
                 else Message.assistant_message(content)
             )
+            logger.info(f"steve: toolcall think assistant_msg: {assistant_msg}")
             self.memory.add_message(assistant_msg)
 
             if self.tool_choices == ToolChoice.REQUIRED and not self.tool_calls:
@@ -129,6 +133,7 @@ class ToolCallAgent(ReActAgent):
 
     async def act(self) -> str:
         """Execute tool calls and handle their results"""
+        logger.info(f"steve: toolcall act")
         if not self.tool_calls:
             if self.tool_choices == ToolChoice.REQUIRED:
                 raise ValueError(TOOL_CALL_REQUIRED)
@@ -157,7 +162,9 @@ class ToolCallAgent(ReActAgent):
                 name=command.function.name,
                 base64_image=self._current_base64_image,
             )
+            logger.info(f"steve: toolcall act tool_msg: {tool_msg}")
             self.memory.add_message(tool_msg)
+            logger.info(f"steve: toolcall act self.memory.messages: {self.memory.messages}")
             results.append(result)
 
         return "\n\n".join(results)
@@ -177,6 +184,7 @@ class ToolCallAgent(ReActAgent):
 
             # Execute the tool
             logger.info(f"🔧 Activating tool: '{name}'...")
+            logger.info(f"steve: toolcall act args: {args}")
             result = await self.available_tools.execute(name=name, tool_input=args)
 
             # Handle special tools

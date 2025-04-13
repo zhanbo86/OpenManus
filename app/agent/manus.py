@@ -8,6 +8,7 @@ from app.tool import Terminate, ToolCollection
 from app.tool.browser_use_tool import BrowserUseTool
 from app.tool.python_execute import PythonExecute
 from app.tool.str_replace_editor import StrReplaceEditor
+from app.logger import logger
 
 
 class Manus(BrowserAgent):
@@ -41,12 +42,12 @@ class Manus(BrowserAgent):
         """Process current state and decide next actions with appropriate context."""
         # Store original prompt
         original_prompt = self.next_step_prompt
-        print("steve: original_prompt", original_prompt)
+        logger.info(f"steve: original_prompt: {original_prompt}")
 
         # Only check recent messages (last 3) for browser activity
         recent_messages = self.memory.messages[-3:] if self.memory.messages else []
 
-        print("steve: recent_messages", recent_messages)
+        logger.info(f"steve: recent_messages: {recent_messages}")
 
         browser_in_use = any(
             "browser_use" in msg.content.lower()
@@ -54,15 +55,15 @@ class Manus(BrowserAgent):
             if hasattr(msg, "content") and isinstance(msg.content, str)
         )
 
-        print("steve: browser_in_use", browser_in_use)
+        logger.info(f"steve: browser_in_use: {browser_in_use}")
 
         if browser_in_use:
             # Override with browser-specific prompt temporarily to get browser context
             self.next_step_prompt = BROWSER_NEXT_STEP_PROMPT
-            print("steve: BROWSER_NEXT_STEP_PROMPT", BROWSER_NEXT_STEP_PROMPT)
 
         # Call parent's think method
         result = await super().think()
+        logger.info(f"steve: manus think result: {result}")
 
         # Restore original prompt
         self.next_step_prompt = original_prompt

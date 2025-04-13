@@ -36,7 +36,8 @@ class ProxySettings(BaseModel):
 
 
 class SearchSettings(BaseModel):
-    engine: str = Field(default="Google", description="Search engine the llm to use")
+    # engine: str = Field(default="Google", description="Search engine the llm to use")
+    engine: str = Field(default="Baidu", description="Search engine the llm to use")
     fallback_engines: List[str] = Field(
         default_factory=lambda: ["DuckDuckGo", "Baidu"],
         description="Fallback search engines to try if the primary engine fails",
