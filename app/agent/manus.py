@@ -47,7 +47,7 @@ class Manus(BrowserAgent):
         # Only check recent messages (last 3) for browser activity
         recent_messages = self.memory.messages[-3:] if self.memory.messages else []
 
-        logger.info(f"steve: recent_messages: {recent_messages}")
+        logger.info(f"steve: manus, self.memory.messages: {self.memory.messages}")
 
         browser_in_use = any(
             "browser_use" in msg.content.lower()

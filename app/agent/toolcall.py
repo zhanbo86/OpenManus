@@ -142,6 +142,7 @@ class ToolCallAgent(ReActAgent):
             return self.messages[-1].content or "No content or commands to execute"
 
         results = []
+        logger.info(f"steve: toolcall act self.tool_calls: {self.tool_calls}")
         for command in self.tool_calls:
             # Reset base64_image for each tool call
             self._current_base64_image = None
